@@ -1,24 +1,37 @@
-import './style.css'
-import javascriptLogo from './javascript.svg'
-import viteLogo from '/vite.svg'
-import { setupCounter } from './counter.js'
+import * as THREE from "three";
+import { Renderer } from "./renderer"
+import { Camera } from "./camera";
+import { player } from "./Player";
+import { map } from "./Map";
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="${viteLogo}" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-      <img src="${javascriptLogo}" class="logo vanilla" alt="JavaScript logo" />
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
+import { animateVehicles } from "./animateVehicles";
+import { animatePlayer } from "./animatePlayer";
+import { hitTest } from "./hitTest";
 
-setupCounter(document.querySelector('#counter'))
+import "./style.css";
+import "./collectUserInput";
+
+const scene = new THREE.Scene();
+scene.add(player);
+scene.add(map)
+
+const ambientLight = new  THREE.AmbientLight();
+scene.add(ambientLight);
+
+const dirLight = new THREE.DirectionalLight();
+dirLight.position.set(-100, -100, 200);
+scene.add(dirLight);
+
+const camera = Camera();
+player.add(camera);
+
+const renderer = Renderer();
+renderer.setAnimationLoop(animate);
+
+function animate() {
+    animateVehicles();
+    animatePlayer();
+    hitTest();
+
+    renderer.render(scene, camera);
+}
